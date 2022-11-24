@@ -7,6 +7,12 @@ from catalog.forms import RenewBookForm, RenewBookModelForm
 from django.urls import reverse
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from catalog.forms import ContactForm
+from django.core.mail import send_mail, BadHeaderError
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.utils.translation import gettext_lazy as _
 
 
 
@@ -155,8 +161,25 @@ class AuthorDelete(DeleteView):
 
 
 def acerca_de(request):
+    if request.method == 'POST':
+        #recogemos datos del formulario
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            from_email = form.cleaned_data['from_email']
+            message = form.cleaned_data['message']
+            try:
+                send_mail(subject, message, from_email, ['admin@example.com'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            messages.success(request, _('Message sent successfully!'))
+            return HttpResponseRedirect(reverse('index'))
+        messages.error(request, _("Error. Message not sent."))
+
+
     context = {}
     context['title'] = 'Acerca de'
     context['coords'] = "41.6447242,-0.9231553"
+    context['form'] = ContactForm()
     
     return render(request, 'acerca_de.html',context)

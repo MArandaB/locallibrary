@@ -1,5 +1,8 @@
 from django.db import models
 import uuid 
+from django.utils.translation import gettext_lazy as _
+from django.contrib import admin
+from django.utils.html import format_html
 
  #https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Models
 # Create your models here.
@@ -32,6 +35,11 @@ class Book(models.Model):
         """String for representing the Model object."""
         return self.title
 
+    def display_genre(self):
+        """Create a string for the Genre. This is required to display genre in Admin."""
+        return ', '.join(genre.name for genre in self.genre.all()[:3])
+
+    display_genre.short_description = 'Genre'
 
 class Author (models.Model):
     """Model representing an author."""
@@ -77,6 +85,8 @@ class Bookinstance(models.Model):
         on_delete=models.SET_NULL, null=True) 
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
+    image = models.ImageField(upload_to='images', 
+        blank=True, null=True)
 
     LOAN_STATUS = (
         ('m', 'Maintenance'),
@@ -99,3 +109,20 @@ class Bookinstance(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.id}-({self.book.title})'
+
+    @admin.display(description=_("Image"))
+    def img_image(self):
+        if self.image:
+            return format_html(
+                '<img src="{}" width="80" />'.format(
+                    self.image.url)
+            )
+        else:
+            return 'NO hay foto disponible'
+
+    @admin.display(description=_("Status"))
+    def status_color(self):
+        return format_html(
+            '<span style="color:{}; font-size:18px;">X</span>',
+            'green' if self.status == 'a' else 'red'
+        )

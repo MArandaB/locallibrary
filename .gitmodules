@@ -1,0 +1,3 @@
+[submodule "mundial-futbol-app"]
+	path = mundial-futbol-app
+	url = https://github.com/MArandaB/mundial-futbol-app.git

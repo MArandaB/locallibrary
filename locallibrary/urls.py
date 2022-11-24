@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path
 #añadir include
 from django.urls import include
+from django.conf.urls.static import static
+from django.conf import settings
+
+# importamos la vista de nuestra app catalog
 from catalog.views import index_general
 
 urlpatterns = [
@@ -24,8 +28,10 @@ urlpatterns = [
     #urls de nuestra nueva app
     #castellanizar catalogo
     path('catalogo/', include('catalog.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     ##para el index general
     path('',index_general, name='index_general'),
     path('__debug__/', include('debug_toolbar.urls')),
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
