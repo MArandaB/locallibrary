@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     #Aplicaciones nuestras
     'catalog.apps.CatalogConfig',
     'mundial.apps.MundialConfig',
+    'bibliotecas.apps.BibliotecasConfig',
+
 
     'debug_toolbar',
 ]
