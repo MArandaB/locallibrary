@@ -28,6 +28,7 @@ urlpatterns = [
     #urls de nuestra nueva app
     #castellanizar catalogo
     path('catalogo/', include('catalog.urls')),
+    path('bibliotecas/', include('bibliotecas.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 
     ##para el index general
